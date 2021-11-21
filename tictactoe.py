@@ -113,7 +113,7 @@ async def end_game(status):
         await bot.send_message(chat_id=cid,
                                text=f'Durrang 🤝 \n'
                                     f'📉 Natija:\n\n{b1.text}{b2.text}{b3.text}\n{b4.text}{b5.text}{b6.text}\n{b7.text}{b8.text}{b9.text}'
-                                    f'🤖 Bot @dynamitebilol tomonidan yasaldi')
+                                    f'\n🤖 Bot @dynamitebilol tomonidan yasaldi')
 
 
 def get_current_user():
@@ -128,7 +128,7 @@ async def announce_winner(winner):
     await bot.send_message(chat_id=cid,
                            text=f"{winner} g'olib bo'ldi 🏆\n"
                                 f"📉 Natija:\n\n{b1.text}{b2.text}{b3.text}\n{b4.text}{b5.text}{b6.text}\n{b7.text}{b8.text}{b9.text}"
-                                f"🤖 Bot @dynamitebilol tomonidan yasaldi")
+                                f"\n🤖 Bot @dynamitebilol tomonidan yasaldi")
 
 
 def count_white_squares():
