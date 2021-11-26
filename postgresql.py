@@ -4,7 +4,7 @@ import asyncpg
 from asyncpg import Connection
 from asyncpg.pool import Pool
 
-from . import tictactoe
+import tictactoe
 
 class Database:
 
