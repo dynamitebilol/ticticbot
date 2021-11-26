@@ -1,1 +1,1 @@
-worker: python tictactoe.py
+worker: python app.py
