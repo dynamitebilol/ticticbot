@@ -1,17 +1,41 @@
 import logging
+import os
 
+import asyncpg
 from aiogram import Bot, types
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import Dispatcher
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils import executor
 from aiogram.utils.exceptions import RetryAfter
+
+from postgresql import Database
+
+DB_USER = str(os.environ.get("DB_USER"))
+DB_PASS = str(os.environ.get("DB_PASS"))
+DB_NAME = str(os.environ.get("DB_NAME"))
+DB_HOST = str(os.environ.get("DB_HOST"))
+
+
+async def on_startup(dispatcher):
+    await db.create()
+    # await db.drop_users()
+    await db.create_table_users()
+    # Birlamchi komandalar (/star va /help)
+    await set_default_commands(dispatcher)
+
+
+
+
 
 white_square = '⬜'
 circle = '⭕'
 X = '❌'
 logger = logging.getLogger(__name__)
 bot = Bot(token='2127643889:AAHzOXJjncr0Rf3S6FXtm81q_477wfz9diY')
-dp = Dispatcher(bot)
+db = Database()
+storage = MemoryStorage()
+dp = Dispatcher(bot, storage=storage)
 
 # inline buttons
 b1 = InlineKeyboardButton(white_square, callback_data='1')
@@ -33,10 +57,20 @@ inline_kb_full.add(b7, b8, b9)
 # start game
 @dp.message_handler(commands=['start'])
 async def start(message: types.Message):
+    try:
+        user = await db.add_user(telegram_id=message.from_user.id,
+                                 full_name=message.from_user.full_name,
+                                 username=message.from_user.username)
+    except asyncpg.exceptions.UniqueViolationError:
+        user = await db.select_user(telegram_id=message.from_user.id)
+
     name = message.from_user.full_name
     await bot.send_message(chat_id="709391288", text=f"{name} botga qo'shildi!")
     await message.reply("🎮 O'yinni boshlash uchun /game buyrug'ini bosing!")
     await set_default_commands(dp)
+    count = await db.count_users()
+    msg = f"{user[1]} bazaga qo'shildi.\nBazada {count} ta foydalanuvchi bor."
+    await bot.send_message(chat_id="709391288", text=msg)
 
 @dp.message_handler(commands=['game'])
 async def process_command_1(message: types.Message):
@@ -187,6 +221,7 @@ async def set_default_commands(dp):
             types.BotCommand("game", "🎮 O'yinni boshlash")
         ]
     )
+
 
 if __name__ == '__main__':
     executor.start_polling(dp)
