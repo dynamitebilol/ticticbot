@@ -22,7 +22,5 @@ async def on_startup(dispatcher):
     # Birlamchi komandalar (/star va /help)
     await set_default_commands(dispatcher)
 
-
-
 if __name__ == '__main__':
     executor.start_polling(dp)
