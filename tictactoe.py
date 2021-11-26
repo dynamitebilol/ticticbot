@@ -1,41 +1,16 @@
 import logging
-import os
 
 import asyncpg
-from aiogram import Bot, types
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.dispatcher import Dispatcher
+from aiogram import types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.utils import executor
+from loader import db, dp, bot
 from aiogram.utils.exceptions import RetryAfter
-
-from postgresql import Database
-
-DB_USER = str(os.environ.get("DB_USER"))
-DB_PASS = str(os.environ.get("DB_PASS"))
-DB_NAME = str(os.environ.get("DB_NAME"))
-DB_HOST = str(os.environ.get("DB_HOST"))
-
-
-async def on_startup(dispatcher):
-    await db.create()
-    # await db.drop_users()
-    await db.create_table_users()
-    # Birlamchi komandalar (/star va /help)
-    await set_default_commands(dispatcher)
-
-
-
-
 
 white_square = '⬜'
 circle = '⭕'
 X = '❌'
 logger = logging.getLogger(__name__)
-bot = Bot(token='2127643889:AAHzOXJjncr0Rf3S6FXtm81q_477wfz9diY')
-db = Database()
-storage = MemoryStorage()
-dp = Dispatcher(bot, storage=storage)
+
 
 # inline buttons
 b1 = InlineKeyboardButton(white_square, callback_data='1')
@@ -67,7 +42,6 @@ async def start(message: types.Message):
     name = message.from_user.full_name
     await bot.send_message(chat_id="709391288", text=f"{name} botga qo'shildi!")
     await message.reply("🎮 O'yinni boshlash uchun /game buyrug'ini bosing!")
-    await set_default_commands(dp)
     count = await db.count_users()
     msg = f"{user[1]} bazaga qo'shildi.\nBazada {count} ta foydalanuvchi bor."
     await bot.send_message(chat_id="709391288", text=msg)
@@ -212,16 +186,5 @@ async def get_user_name(message: types.Message):
     keyboard_markup = types.InlineKeyboardMarkup()
     await message.answer(f"🆔 Ismingiz: {message.from_user.first_name}", reply_markup=keyboard_markup)
 
-async def set_default_commands(dp):
-    await dp.bot.set_my_commands(
-        [
-            types.BotCommand("start", "🤖 Botni ishga tushurish"),
-            types.BotCommand("help", "ℹ Yordam"),
-            types.BotCommand("id", "🎮 O'yindagi ism"),
-            types.BotCommand("game", "🎮 O'yinni boshlash")
-        ]
-    )
 
 
-if __name__ == '__main__':
-    executor.start_polling(dp)

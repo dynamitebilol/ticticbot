@@ -4,7 +4,7 @@ import asyncpg
 from asyncpg import Connection
 from asyncpg.pool import Pool
 
-import tictactoe
+import config
 
 class Database:
 
@@ -13,10 +13,10 @@ class Database:
 
     async def create(self):
         self.pool = await asyncpg.create_pool(
-            user=tictactoe.DB_USER,
-            password=tictactoe.DB_PASS,
-            host=tictactoe.DB_HOST,
-            database=tictactoe.DB_NAME
+            user=config.DB_USER,
+            password=config.DB_PASS,
+            host=config.DB_HOST,
+            database=config.DB_NAME
         )
 
     async def execute(self, command, *args,
