@@ -1,17 +1,8 @@
-from aiogram import types
-from aiogram.utils import executor
 
+from aiogram.utils import executor
+from commands import set_default_commands
 from loader import db, dp
 
-async def set_default_commands(dp):
-    await dp.bot.set_my_commands(
-        [
-            types.BotCommand("start", "🤖 Botni ishga tushurish"),
-            types.BotCommand("help", "ℹ Yordam"),
-            types.BotCommand("id", "🎮 O'yindagi ism"),
-            types.BotCommand("game", "🎮 O'yinni boshlash")
-        ]
-    )
 
 
 
